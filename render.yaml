@@ -19,12 +19,4 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_BASE
-        fromService:
-          name: scamcheck-api
-          type: web
-          property: host
-          # We need to prepend https:// and append /api
-          # Render doesn't support complex interpolation in render.yaml out of the box natively,
-          # so usually the user needs to manually set this in the Render dashboard after API deploy.
-          # We will set a placeholder that the user must override in the dashboard.
         value: "https://scamcheck-api.onrender.com/api"
