@@ -1,0 +1,7 @@
+torch>=2.2
+transformers>=4.45
+tokenizers>=0.19
+scikit-learn>=1.5
+numpy>=1.26
+pandas>=2.2
+safetensors>=0.4

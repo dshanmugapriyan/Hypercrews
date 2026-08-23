@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: scamcheck-api
+    env: python
+    buildCommand: "pip install -r requirements.txt -r requirements-ml.txt"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+
+  - type: web
+    name: scamcheck-frontend
+    env: static
+    buildCommand: "cd frontend && npm install && npm run build"
+    staticPublishPath: "frontend/dist"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE
+        fromService:
+          name: scamcheck-api
+          type: web
+          property: host
+          # We need to prepend https:// and append /api
+          # Render doesn't support complex interpolation in render.yaml out of the box natively,
+          # so usually the user needs to manually set this in the Render dashboard after API deploy.
+          # We will set a placeholder that the user must override in the dashboard.
+        value: "https://scamcheck-api.onrender.com/api"
