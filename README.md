@@ -75,6 +75,10 @@ Data flows sequentially through these core layers:
 ### Authentication Note
 You must configure a valid Google Client ID to use the frontend login. We have pre-configured a Client ID for demo purposes.
 
+Alternatively, you can log in using the default local administrator credentials:
+- **Email:** `admin@scamcheck.io`
+- **Password:** `password123`
+
 ---
 
 ## 4. Deployment
