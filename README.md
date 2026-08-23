@@ -13,17 +13,33 @@ ScamCheck PRO is a production-style fraud-intelligence SaaS application built to
 
 ## 1. Machine Learning Performance Metrics
 
-ScamCheck PRO uses a fine-tuned Transformer model (EMSCAD-trained) to evaluate textual signals (urgency, payment flags) alongside traditional models.
+ScamCheck PRO relies on an ensemble of machine learning models to accurately detect fraud. Below is a breakdown of the models, the datasets used to train them, and their performance.
 
-### NLP Transformer Classifier
-*Evaluated on a held-out test split from the `internship_job_scam_dataset.csv` (900 balanced records).*
+### 1. NLP Transformer Classifier (DistilBERT)
+*   **Dataset Used**: The `EMSCAD` (Employment Scam Aegean Dataset) via `internship_job_scam_dataset.csv` (900 balanced records).
+*   **Why**: This dataset contains real-world job descriptions labeled as legitimate or fraudulent. It is perfect for teaching a deep learning Transformer model to understand the subtle semantic characteristics, urgency cues, and payment requests typical in recruitment fraud.
+*   **Metrics** *(Evaluated on a 20% held-out test split)*:
+    *   **Accuracy**: 89.44%
+    *   **F1 Score**: 85.27%
+    *   **Recall**: 87.30%
+    *   **Precision**: 83.33%
 
-| Evaluation Metric | Score | Description |
-| :--- | :--- | :--- |
-| **Accuracy** | **89.44%** | Overall model classification accuracy |
-| **F1 Score** | **85.27%** | Harmonic mean of precision and recall |
-| **Recall** | **87.30%** | Ability to find all relevant cases |
-| **Precision** | **83.33%** | Proportion of positive identifications that were actually correct |
+### 2. NLP Baseline Classifier (TF-IDF + Logistic Regression)
+*   **Dataset Used**: The `EMSCAD` dataset.
+*   **Why**: Used as a lightweight, highly interpretable baseline to compare against the deep learning Transformer, and serves as a fast fallback model.
+*   **Metrics**:
+    *   **Precision**: 77.73%
+    *   **Recall**: 76.67%
+    *   **F1 Score**: 76.32%
+    *   **ROC-AUC**: 92.46%
+
+### 3. URL Risk Model (XGBoost)
+*   **Dataset Used**: A curated tabular dataset of malicious phishing domains and benign URLs, focusing on topological features like URL length, Shannon entropy, TLD reputation, HTTPS presence, and subdomain count.
+*   **Why**: Recruitment scams heavily rely on spoofed domains and credential-harvesting links. XGBoost is highly effective at modeling the non-linear relationships in these static structural URL features without needing to actually visit the dangerous links.
+
+### 4. Multi-Model Fusion (Logistic Meta-Model)
+*   **Dataset Used**: Validation probability outputs from both the NLP and URL models.
+*   **Why**: Acts as an ensemble meta-classifier. Instead of relying on a simple average, it learns exactly how much weight to give the NLP text signals vs. the URL threat signals to produce a single, unified, and highly accurate verdict.
 
 ---
 
